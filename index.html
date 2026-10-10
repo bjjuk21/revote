@@ -111,7 +111,8 @@
                 <i class="fa-solid fa-scroll text-xs"></i>
                 <span>&lt;게임의 룰&gt;</span>
             </button>
-            <button id="tabBtn-roles" onclick="switchTab('roles')" class="tab-btn min-h-[48px] px-4 sm:px-6 py-3 text-xs sm:text-sm font-black border-b-2 border-transparent text-slate-400 hover:text-slate-200 flex items-center space-x-1.5 whitespace-nowrap transition active:bg-slate-800/50">
+            <!-- Hidden by default, shown ONLY for valid authorized players -->
+            <button id="tabBtn-roles" onclick="switchTab('roles')" class="tab-btn hidden min-h-[48px] px-4 sm:px-6 py-3 text-xs sm:text-sm font-black border-b-2 border-transparent text-slate-400 hover:text-slate-200 flex items-center space-x-1.5 whitespace-nowrap transition active:bg-slate-800/50">
                 <i class="fa-solid fa-users text-xs"></i>
                 <span>&lt;롤&gt;</span>
             </button>
@@ -136,9 +137,9 @@
                         대선 : 새로운 시작
                     </h2>
                 </div>
-                <button onclick="handleRoleTabAccess()" class="w-full xs:w-auto px-4 py-2.5 bg-gradient-to-r from-orange-500 to-purple-600 active:scale-95 text-white text-xs font-extrabold rounded-xl shadow-lg transition flex items-center justify-center space-x-1.5 min-h-[44px]">
+                <button id="btnBannerRoleAccess" onclick="handleRoleTabAccess()" class="w-full xs:w-auto px-4 py-2.5 bg-gradient-to-r from-orange-500 to-purple-600 active:scale-95 text-white text-xs font-extrabold rounded-xl shadow-lg transition flex items-center justify-center space-x-1.5 min-h-[44px]">
                     <i class="fa-solid fa-user-check"></i>
-                    <span>플레이할 역할 선택하기</span>
+                    <span>플레이어 설정 및 역할 확인</span>
                 </button>
             </div>
         </section>
@@ -199,7 +200,7 @@
 
                 <div class="pt-2 text-center">
                     <button onclick="handleRoleTabAccess()" class="w-full sm:w-auto px-6 py-3.5 bg-gradient-to-r from-orange-500 via-amber-500 to-purple-600 active:scale-95 text-white font-black text-xs sm:text-sm rounded-xl sm:rounded-2xl shadow-xl transition min-h-[48px]">
-                        다음: 역할 및 능력 확인하기 &lt;롤&gt; →
+                        선거구 분석 확인하기 &lt;5개 선거구 안내&gt; →
                     </button>
                 </div>
 
@@ -528,7 +529,7 @@
                 <!-- Name Input -->
                 <div>
                     <label class="block text-[11px] font-semibold text-slate-400 mb-1 text-center">이름</label>
-                    <input type="text" id="playerNameInput" placeholder="이름 입력 (예: 선거 유세, 홍길동)" required autocomplete="off" oninput="handleNameInputChange()"
+                    <input type="text" id="playerNameInput" placeholder="예: 홍길동" required autocomplete="off" oninput="handleNameInputChange()"
                         class="w-full px-4 py-3 bg-slate-950 border border-slate-700 rounded-xl text-white font-bold placeholder-slate-600 focus:outline-none focus:border-amber-400 transition text-center text-base min-h-[48px]">
                 </div>
 
@@ -560,6 +561,9 @@
         let currentPlayerName = '';
         let selectedRoleId = null;
         let disabledRoleIds = [];
+        
+        // List of authorized players who can access the <롤> category
+        const AUTHORIZED_PLAYERS = ['선거 유세', '김승주', '박현아', '유은비'];
 
         window.onload = function() {
             const savedName = localStorage.getItem('oraktruck_player_name');
@@ -586,7 +590,7 @@
 
         function closeNameModal() {
             if (!currentPlayerName) {
-                applyPlayerName('플레이어');
+                applyPlayerName('게스트');
             }
             document.getElementById('nameModal').classList.add('hidden');
         }
@@ -648,6 +652,21 @@
             const headerMobile = document.getElementById('headerPlayerNameMobile');
             if (headerDesktop) headerDesktop.textContent = cleanName;
             if (headerMobile) headerMobile.textContent = cleanName;
+
+            const isAuthorized = AUTHORIZED_PLAYERS.includes(cleanName);
+            const roleTabBtn = document.getElementById('tabBtn-roles');
+
+            // Show or Hide <롤> Tab based on authorization
+            if (isAuthorized) {
+                roleTabBtn.classList.remove('hidden');
+            } else {
+                roleTabBtn.classList.add('hidden');
+                // If user is currently on 'roles' tab, switch back to 'rules'
+                const rolesSection = document.getElementById('content-roles');
+                if (rolesSection && !rolesSection.classList.contains('hidden')) {
+                    switchTab('rules');
+                }
+            }
 
             const allSecrets = document.querySelectorAll('.secret-item');
             const fixedBadges = document.querySelectorAll('.fixed-player-badge');
@@ -778,7 +797,8 @@
         }
 
         function handleRoleTabAccess() {
-            if (!currentPlayerName) {
+            const isAuthorized = AUTHORIZED_PLAYERS.includes(currentPlayerName);
+            if (!isAuthorized) {
                 openNameModal();
             } else {
                 switchTab('roles');
@@ -786,7 +806,8 @@
         }
 
         function switchTab(tabKey) {
-            if (!currentPlayerName && tabKey === 'roles') {
+            const isAuthorized = AUTHORIZED_PLAYERS.includes(currentPlayerName);
+            if (tabKey === 'roles' && !isAuthorized) {
                 openNameModal();
                 return;
             }
@@ -796,13 +817,17 @@
                 const contentEl = document.getElementById(`content-${t}`);
                 const btnEl = document.getElementById(`tabBtn-${t}`);
                 if (t === tabKey) {
-                    contentEl.classList.remove('hidden');
-                    btnEl.classList.add('border-orange-500', 'text-orange-400');
-                    btnEl.classList.remove('border-transparent', 'text-slate-400');
+                    if (contentEl) contentEl.classList.remove('hidden');
+                    if (btnEl) {
+                        btnEl.classList.add('border-orange-500', 'text-orange-400');
+                        btnEl.classList.remove('border-transparent', 'text-slate-400');
+                    }
                 } else {
-                    contentEl.classList.add('hidden');
-                    btnEl.classList.remove('border-orange-500', 'text-orange-400');
-                    btnEl.classList.add('border-transparent', 'text-slate-400');
+                    if (contentEl) contentEl.classList.add('hidden');
+                    if (btnEl) {
+                        btnEl.classList.remove('border-orange-500', 'text-orange-400');
+                        btnEl.classList.add('border-transparent', 'text-slate-400');
+                    }
                 }
             });
 
