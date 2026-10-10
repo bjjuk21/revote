@@ -1,1 +1,760 @@
-# revote
+<!DOCTYPE html>
+<html lang="ko" class="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>오락트럭 EP.13 - 대선: 새로운 시작</title>
+    
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        jinbo: { DEFAULT: '#f97316', dark: '#ea580c', light: '#ffedd5' },   // 친강: 주황 🟧
+                        bosu: { DEFAULT: '#a855f7', dark: '#9333ea', light: '#f3e8ff' },    // 반강: 보라 🟪
+                        jungdo: { DEFAULT: '#22c55e', dark: '#16a34a', light: '#dcfce7' },  // 계파색 옅음: 초록 🟩
+                        musosok: { DEFAULT: '#94a3b8', dark: '#64748b', light: '#f8fafc' } // 제3지대: 흰색 ⬜
+                    },
+                    fontFamily: {
+                        sans: ['Pretendard', 'Inter', '-apple-system', 'BlinkMacSystemFont', 'Segoe UI', 'Roboto', 'sans-serif']
+                    }
+                }
+            }
+        }
+    </script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <style>
+        html, body {
+            touch-action: manipulation;
+            -webkit-tap-highlight-color: transparent;
+        }
+        
+        ::-webkit-scrollbar {
+            width: 6px;
+            height: 6px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #0f172a;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #334155;
+            border-radius: 4px;
+        }
+        .broadcast-bg {
+            background-image: radial-gradient(rgba(255, 255, 255, 0.05) 1px, transparent 1px);
+            background-size: 20px 20px;
+        }
+        .no-scrollbar::-webkit-scrollbar {
+            display: none;
+        }
+        .no-scrollbar {
+            -ms-overflow-style: none;
+            scrollbar-width: none;
+        }
+        
+        /* Disabled role card styling */
+        .role-card-disabled {
+            filter: grayscale(0.9) contrast(0.85);
+            opacity: 0.55;
+            background-color: #0b1329 !important;
+            border-color: #334155 !important;
+            cursor: not-allowed !important;
+            pointer-events: none !important;
+        }
+    </style>
+</head>
+<body class="bg-slate-950 text-slate-100 font-sans min-h-screen flex flex-col antialiased broadcast-bg selection:bg-orange-500 selection:text-white pb-12">
+
+    <header class="sticky top-0 z-40 bg-slate-900/95 backdrop-blur-lg border-b border-slate-800 shadow-2xl">
+        <div class="max-w-5xl mx-auto px-3.5 sm:px-6 py-2.5 sm:py-3.5 flex items-center justify-between gap-2">
+            
+            <!-- Program Title & Episode Badge -->
+            <div class="flex items-center space-x-2.5 cursor-pointer active:opacity-80 transition" onclick="switchTab('rules')">
+                <div class="bg-gradient-to-tr from-orange-500 via-amber-500 to-purple-600 p-2 sm:p-2.5 rounded-xl sm:rounded-2xl shadow-lg shrink-0">
+                    <i class="fa-solid fa-truck-monster text-white text-base sm:text-xl"></i>
+                </div>
+                <div class="truncate">
+                    <div class="flex items-center space-x-1.5">
+                        <span class="bg-red-600 text-white text-[9px] sm:text-[10px] font-black px-1.5 py-0.2 rounded-full uppercase tracking-wider animate-pulse">ON AIR</span>
+                        <span class="text-[11px] sm:text-xs text-amber-400 font-black tracking-wider">EP.13</span>
+                    </div>
+                    <h1 class="text-base sm:text-xl font-black tracking-tight text-transparent bg-clip-text bg-gradient-to-r from-orange-400 via-amber-200 to-purple-300 truncate">
+                        대선 : 새로운 시작
+                    </h1>
+                </div>
+            </div>
+
+            <button onclick="openNameModal()" class="shrink-0 flex items-center space-x-2 bg-slate-800/90 hover:bg-slate-700/90 active:scale-95 border border-slate-700 rounded-xl sm:rounded-2xl px-2.5 sm:px-3.5 py-2 min-h-[44px] transition shadow-md">
+                <div class="w-6 h-6 rounded-full bg-slate-700 flex items-center justify-center text-amber-400 text-xs shrink-0">
+                    <i class="fa-solid fa-user"></i>
+                </div>
+                <div class="text-left hidden xs:block sm:block">
+                    <div class="text-[9px] text-slate-400 font-semibold leading-none">플레이어</div>
+                    <div class="text-xs font-bold text-slate-100 max-w-[80px] sm:max-w-[120px] truncate leading-tight" id="headerPlayerName">
+                        미입력
+                    </div>
+                </div>
+                <div class="text-[11px] font-bold text-amber-400 sm:text-slate-300 flex items-center space-x-1">
+                    <span class="xs:hidden sm:hidden" id="headerPlayerNameMobile">미입력</span>
+                    <i class="fa-solid fa-pen-to-square text-xs text-amber-400"></i>
+                </div>
+            </button>
+        </div>
+
+        <nav class="max-w-5xl mx-auto px-2 sm:px-6 flex border-t border-slate-800 overflow-x-auto no-scrollbar scroll-smooth">
+            <button id="tabBtn-rules" onclick="switchTab('rules')" class="tab-btn min-h-[48px] px-4 sm:px-6 py-3 text-xs sm:text-sm font-black border-b-2 border-orange-500 text-orange-400 flex items-center space-x-1.5 whitespace-nowrap transition active:bg-slate-800/50">
+                <i class="fa-solid fa-scroll text-xs"></i>
+                <span>&lt;게임의 룰&gt;</span>
+            </button>
+            <button id="tabBtn-roles" onclick="switchTab('roles')" class="tab-btn min-h-[48px] px-4 sm:px-6 py-3 text-xs sm:text-sm font-black border-b-2 border-transparent text-slate-400 hover:text-slate-200 flex items-center space-x-1.5 whitespace-nowrap transition active:bg-slate-800/50">
+                <i class="fa-solid fa-users text-xs"></i>
+                <span>&lt;롤&gt;</span>
+            </button>
+            <button id="tabBtn-districts" onclick="switchTab('districts')" class="tab-btn min-h-[48px] px-4 sm:px-6 py-3 text-xs sm:text-sm font-black border-b-2 border-transparent text-slate-400 hover:text-slate-200 flex items-center space-x-1.5 whitespace-nowrap transition active:bg-slate-800/50">
+                <i class="fa-solid fa-map-location-dot text-xs"></i>
+                <span>&lt;5개 선거구 안내&gt;</span>
+            </button>
+        </nav>
+    </header>
+
+    <main class="flex-1 max-w-5xl w-full mx-auto px-3.5 sm:px-6 lg:px-8 py-4 sm:py-6 space-y-4 sm:space-y-6">
+
+        <section class="bg-gradient-to-r from-purple-950/80 via-slate-900 to-orange-950/80 border border-slate-800 rounded-2xl sm:rounded-3xl p-4 sm:p-6 shadow-xl relative overflow-hidden">
+            <div class="flex flex-col xs:flex-row items-center justify-between gap-3 text-center xs:text-left">
+                <div class="space-y-1">
+                    <div class="inline-flex items-center space-x-1.5 bg-slate-800/80 border border-slate-700 px-2.5 py-0.5 rounded-full text-[10px] sm:text-xs text-amber-400 font-bold">
+                        <span class="w-2 h-2 rounded-full bg-orange-400 animate-ping"></span>
+                        <span>오락트럭 EP.13</span>
+                    </div>
+                    <h2 class="text-xl sm:text-2xl font-black text-white">
+                        대선 : 새로운 시작
+                    </h2>
+                </div>
+                <button onclick="handleRoleTabAccess()" class="w-full xs:w-auto px-4 py-2.5 bg-gradient-to-r from-orange-500 to-purple-600 active:scale-95 text-white text-xs font-extrabold rounded-xl shadow-lg transition flex items-center justify-center space-x-1.5 min-h-[44px]">
+                    <i class="fa-solid fa-user-check"></i>
+                    <span>플레이할 역할 선택하기</span>
+                </button>
+            </div>
+        </section>
+
+        <section id="content-rules" class="space-y-4 sm:space-y-6">
+            <div class="bg-slate-900/90 border border-slate-800 rounded-2xl sm:rounded-3xl p-4 sm:p-8 shadow-xl space-y-5 sm:space-y-6">
+                
+                <div class="flex items-center space-x-3 border-b border-slate-800 pb-3.5">
+                    <div class="w-9 h-9 sm:w-10 sm:h-10 rounded-xl sm:rounded-2xl bg-orange-500/20 text-orange-400 flex items-center justify-center text-lg sm:text-xl font-bold border border-orange-500/30 shrink-0">
+                        📜
+                    </div>
+                    <div>
+                        <h3 class="text-xl sm:text-2xl font-black text-white">&lt;게임의 룰&gt;</h3>
+                        <p class="text-[11px] sm:text-xs text-slate-400">대선 승리 기본 목표</p>
+                    </div>
+                </div>
+
+                <!-- Main Rule Text Box -->
+                <div class="bg-gradient-to-r from-slate-950 via-slate-900 to-slate-950 border-l-4 border-amber-400 p-4 sm:p-6 rounded-r-2xl shadow-inner">
+                    <p class="text-sm sm:text-base md:text-lg font-bold leading-relaxed sm:leading-loose text-amber-200">
+                        "여러분은 사전 선거 유세를 통해 사전 투표를 획득하고 대한민국의 5개 선거구(서울-경기, 충청, 강원, 전라, 경상)에서 자신이 유리한 지역의 정치 관심도를 올려 투표장으로 이끌어 최종 득표를 많이 얻어내 대통령에 당선 되어야 합니다."
+                    </p>
+                </div>
+
+                <div>
+                    <div class="text-xs font-bold text-slate-400 mb-2.5 flex items-center space-x-1">
+                        <i class="fa-solid fa-map"></i>
+                        <span>대한민국 5개 주요 선거구</span>
+                    </div>
+                    <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-2.5">
+                        <div class="bg-slate-950 border border-slate-800 p-3 sm:p-4 rounded-xl text-center space-y-1 hover:border-amber-500/50 transition">
+                            <div class="text-[10px] text-slate-400 font-bold">선거구 1</div>
+                            <div class="text-sm sm:text-base font-black text-amber-400">서울 - 경기</div>
+                            <div class="text-[10px] sm:text-[11px] text-slate-300">캐스팅보트 핵심 거점</div>
+                        </div>
+                        <div class="bg-slate-950 border border-slate-800 p-3 sm:p-4 rounded-xl text-center space-y-1 hover:border-green-500/50 transition">
+                            <div class="text-[10px] text-slate-400 font-bold">선거구 2</div>
+                            <div class="text-sm sm:text-base font-black text-green-400">충청</div>
+                            <div class="text-[10px] sm:text-[11px] text-slate-300">캐스팅보트 지역</div>
+                        </div>
+                        <div class="bg-slate-950 border border-slate-800 p-3 sm:p-4 rounded-xl text-center space-y-1 hover:border-purple-500/50 transition">
+                            <div class="text-[10px] text-slate-400 font-bold">선거구 3</div>
+                            <div class="text-sm sm:text-base font-black text-purple-400">강원</div>
+                            <div class="text-[10px] sm:text-[11px] text-slate-300">캐스팅보트 지역</div>
+                        </div>
+                        <div class="bg-slate-950 border border-slate-800 p-3 sm:p-4 rounded-xl text-center space-y-1 hover:border-orange-500/50 transition">
+                            <div class="text-[10px] text-slate-400 font-bold">선거구 4</div>
+                            <div class="text-sm sm:text-base font-black text-orange-400">전라</div>
+                            <div class="text-[10px] sm:text-[11px] text-slate-300">진보 우세 지역</div>
+                        </div>
+                        <div class="bg-slate-950 border border-slate-800 p-3 sm:p-4 rounded-xl text-center space-y-1 hover:border-purple-500/50 transition col-span-2 sm:col-span-1">
+                            <div class="text-[10px] text-slate-400 font-bold">선거구 5</div>
+                            <div class="text-sm sm:text-base font-black text-purple-400">경상</div>
+                            <div class="text-[10px] sm:text-[11px] text-slate-300">보수 우세 지역</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="pt-2 text-center">
+                    <button onclick="handleRoleTabAccess()" class="w-full sm:w-auto px-6 py-3.5 bg-gradient-to-r from-orange-500 via-amber-500 to-purple-600 active:scale-95 text-white font-black text-xs sm:text-sm rounded-xl sm:rounded-2xl shadow-xl transition min-h-[48px]">
+                        다음: 역할 및 능력 확인하기 &lt;롤&gt; →
+                    </button>
+                </div>
+
+            </div>
+        </section>
+
+        <section id="content-roles" class="hidden space-y-4 sm:space-y-6">
+            
+            <div class="bg-slate-900/90 border border-slate-800 rounded-2xl sm:rounded-3xl p-4 sm:p-8 shadow-xl space-y-5 sm:space-y-6">
+                
+                <!-- Role Header -->
+                <div class="border-b border-slate-800 pb-4 space-y-3">
+                    <div class="flex items-center space-x-3">
+                        <div class="w-9 h-9 sm:w-10 sm:h-10 rounded-xl sm:rounded-2xl bg-purple-500/20 text-purple-400 flex items-center justify-center text-lg sm:text-xl font-bold border border-purple-500/30 shrink-0">
+                            🗳️
+                        </div>
+                        <h3 class="text-xl sm:text-2xl font-black text-white">&lt;롤&gt;</h3>
+                    </div>
+                    
+                    <div class="bg-slate-950 p-3.5 sm:p-4 rounded-xl sm:rounded-2xl border border-slate-800 text-slate-200 text-xs sm:text-sm leading-relaxed space-y-1">
+                        <p>어떤역할을 고르는지에 따라 강세 지역, 영향받는 이슈 등이 달라집니다.</p>
+                        <p>모든 효과에는 빛도 그림자도 있습니다.</p>
+                        <p class="text-amber-400 font-black pt-1">다음 청와대의 주인이 되어주세요.</p>
+                    </div>
+                </div>
+
+                <!-- Political Faction Color Badges with updated shape mappings -->
+                <div class="grid grid-cols-2 sm:grid-cols-4 gap-2">
+                    <div class="bg-purple-950/30 border border-purple-500/30 p-2.5 rounded-xl flex items-center space-x-2">
+                        <span class="text-xl">🟪</span>
+                        <div>
+                            <div class="text-xs font-bold text-purple-400">반강</div>
+                            <div class="text-[9px] text-slate-400">보라 도형 이모지</div>
+                        </div>
+                    </div>
+                    <div class="bg-orange-950/30 border border-orange-500/30 p-2.5 rounded-xl flex items-center space-x-2">
+                        <span class="text-xl">🟧</span>
+                        <div>
+                            <div class="text-xs font-bold text-orange-400">친강</div>
+                            <div class="text-[9px] text-slate-400">주황 도형 이모지</div>
+                        </div>
+                    </div>
+                    <div class="bg-green-950/30 border border-green-500/30 p-2.5 rounded-xl flex items-center space-x-2">
+                        <span class="text-xl">🟩</span>
+                        <div>
+                            <div class="text-xs font-bold text-green-400">계파색 옅음</div>
+                            <div class="text-[9px] text-slate-400">초록 도형 이모지</div>
+                        </div>
+                    </div>
+                    <div class="bg-slate-900 border border-slate-600/40 p-2.5 rounded-xl flex items-center space-x-2">
+                        <span class="text-xl">⬜</span>
+                        <div>
+                            <div class="text-xs font-bold text-slate-200">제3지대</div>
+                            <div class="text-[9px] text-slate-400">흰색 도형 이모지</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-6 pt-1">
+
+                    <!-- 1. 보수 성향 후보자 (반강) -->
+                    <div id="card-role-1" onclick="selectRoleCard(1)" class="cursor-pointer bg-slate-900 border-2 border-purple-500/40 hover:border-purple-400 rounded-2xl sm:rounded-3xl p-4 sm:p-6 shadow-xl relative overflow-hidden flex flex-col justify-between space-y-3 transition">
+                        
+                        <div id="completed-badge-1" class="hidden absolute top-3 right-3 z-10 bg-slate-800 border border-slate-600 text-slate-300 px-3 py-1 rounded-full text-xs font-extrabold shadow-lg flex items-center space-x-1.5">
+                            <i class="fa-solid fa-lock text-amber-400 text-xs"></i>
+                            <span>선택 완료</span>
+                        </div>
+
+                        <div class="flex items-center justify-between">
+                            <span class="bg-purple-600 text-white text-[11px] font-black px-3 py-1 rounded-full flex items-center space-x-1">
+                                <span>🟪 반강 (보수)</span>
+                            </span>
+                            <span class="role-selected-badge hidden text-purple-400 font-bold text-xs"><i class="fa-solid fa-circle-check"></i> 선택됨</span>
+                        </div>
+
+                        <div class="space-y-3">
+                            <h4 class="text-lg sm:text-xl font-black text-purple-300">1. 보수 성향 후보자 (반강)</h4>
+
+                            <div class="text-xs sm:text-sm text-slate-200 space-y-2 leading-relaxed bg-slate-950/80 p-3.5 sm:p-4 rounded-xl border border-slate-800">
+                                <p>- 당신은 강병주 대통령의 2번의 임기가 실패했다고 주장하며 반강 진영을 결집하며 세를 모을 것입니다.</p>
+                                <p>- 메이저 정치 세력으로 일부 지역에서 높은 '정치성향'을 가지고 시작합니다.</p>
+                            </div>
+
+                            <!-- Secret Items for Role 1 -->
+                            <div class="space-y-2 pt-1">
+                                <div data-secret-target="유은비" class="secret-item hidden bg-purple-950/70 border border-purple-500/60 p-3 rounded-xl text-xs text-purple-200 leading-relaxed shadow-inner">
+                                    [플레이어가 '유은비'라면 오락트럭 '잠룡' 우승 베네핏으로 '여당' 효과를 받으며 시작할 수 있습니다.]
+                                </div>
+                                <div data-secret-target="김승주" class="secret-item hidden bg-purple-950/70 border border-purple-500/60 p-3 rounded-xl text-xs text-purple-200 leading-relaxed shadow-inner">
+                                    [플레이어가 '김승주'라면 '단일화' 효과를 사용할 수 있습니다.]
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="pt-2 border-t border-slate-800 text-[11px] text-slate-400 flex justify-between items-center">
+                            <span>진영 표기: <strong class="text-purple-400">보라 🟪 반강</strong></span>
+                            <span class="role-status-footer text-xs text-purple-400 font-bold">터치하여 선택</span>
+                        </div>
+                    </div>
+
+                    <!-- 2. 진보 성향 후보자 (친강) -->
+                    <div id="card-role-2" onclick="selectRoleCard(2)" class="cursor-pointer bg-slate-900 border-2 border-orange-500/40 hover:border-orange-400 rounded-2xl sm:rounded-3xl p-4 sm:p-6 shadow-xl relative overflow-hidden flex flex-col justify-between space-y-3 transition">
+                        
+                        <div id="completed-badge-2" class="hidden absolute top-3 right-3 z-10 bg-slate-800 border border-slate-600 text-slate-300 px-3 py-1 rounded-full text-xs font-extrabold shadow-lg flex items-center space-x-1.5">
+                            <i class="fa-solid fa-lock text-amber-400 text-xs"></i>
+                            <span>선택 완료</span>
+                        </div>
+
+                        <div class="flex items-center justify-between">
+                            <span class="bg-orange-600 text-white text-[11px] font-black px-3 py-1 rounded-full flex items-center space-x-1">
+                                <span>🟧 친강 (진보)</span>
+                            </span>
+                            <span class="role-selected-badge hidden text-orange-400 font-bold text-xs"><i class="fa-solid fa-circle-check"></i> 선택됨</span>
+                        </div>
+
+                        <div class="space-y-3">
+                            <h4 class="text-lg sm:text-xl font-black text-orange-300">2. 진보 성향 후보자 (친강)</h4>
+
+                            <div class="text-xs sm:text-sm text-slate-200 space-y-2 leading-relaxed bg-slate-950/80 p-3.5 sm:p-4 rounded-xl border border-slate-800">
+                                <p>- 당신은 강병주 대통령의 2번의 임기를 충실히 보좌해왔습니다. 이젠 당신이 정권을 연장하는 것이 사명이라 생각하고 대선에 나섰습니다.</p>
+                                <p>- 메이저 정치 세력으로 일부 지역에서 높은 '정치성향'을 가지고 시작합니다.</p>
+                            </div>
+
+                            <!-- Secret Items for Role 2 -->
+                            <div class="space-y-2 pt-1">
+                                <div data-secret-target="박현아" class="secret-item hidden bg-orange-950/70 border border-orange-500/60 p-3 rounded-xl text-xs text-orange-200 leading-relaxed shadow-inner">
+                                    [플레이어가 '박현아'라면 '대통령의 선거 개입' 효과를 받으며 플레이할 수 있습니다.]
+                                </div>
+                                <div data-secret-target="김승주" class="secret-item hidden bg-orange-950/70 border border-orange-500/60 p-3 rounded-xl text-xs text-orange-200 leading-relaxed shadow-inner">
+                                    [플레이어가 '김승주'라면 '제 2의 전두환-노태우' 효과를 받으며 플레이할 수 있습니다.]
+                                </div>
+                                <div data-secret-target="유은비" class="secret-item hidden bg-orange-950/70 border border-orange-500/60 p-3 rounded-xl text-xs text-orange-200 leading-relaxed shadow-inner">
+                                    [플레이어가 '유은비'라면 오락트럭 잠룡 우승 베네핏으로 '여당' 효과를 받으며 시작할 수 있습니다.]
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="pt-2 border-t border-slate-800 text-[11px] text-slate-400 flex justify-between items-center">
+                            <span>진영 표기: <strong class="text-orange-400">주황 🟧 친강</strong></span>
+                            <span class="role-status-footer text-xs text-orange-400 font-bold">터치하여 선택</span>
+                        </div>
+                    </div>
+
+                    <!-- 3. 중도 성향 후보자 (無계파) -->
+                    <div id="card-role-3" onclick="selectRoleCard(3)" class="cursor-pointer bg-slate-900 border-2 border-green-500/40 hover:border-green-400 rounded-2xl sm:rounded-3xl p-4 sm:p-6 shadow-xl relative overflow-hidden flex flex-col justify-between space-y-3 transition">
+                        
+                        <div id="completed-badge-3" class="hidden absolute top-3 right-3 z-10 bg-slate-800 border border-slate-600 text-slate-300 px-3 py-1 rounded-full text-xs font-extrabold shadow-lg flex items-center space-x-1.5">
+                            <i class="fa-solid fa-lock text-amber-400 text-xs"></i>
+                            <span>선택 완료</span>
+                        </div>
+
+                        <div class="flex items-center justify-between">
+                            <span class="bg-green-600 text-white text-[11px] font-black px-3 py-1 rounded-full flex items-center space-x-1">
+                                <span>🟩 계파색 옅음 (중도)</span>
+                            </span>
+                            <span class="role-selected-badge hidden text-green-400 font-bold text-xs"><i class="fa-solid fa-circle-check"></i> 선택됨</span>
+                        </div>
+
+                        <div class="space-y-3">
+                            <h4 class="text-lg sm:text-xl font-black text-green-300">3. 중도 성향 후보자 (無계파)</h4>
+
+                            <div class="text-xs sm:text-sm text-slate-200 space-y-2 leading-relaxed bg-slate-950/80 p-3.5 sm:p-4 rounded-xl border border-slate-800">
+                                <p>- 당신은 친강-반강 구도에 지친 중도파 새로운미래당 의원들을 결집해 세를 모았습니다. 대진보진영이 정권연장을 해야하지만, 10년의 강병주 정권은 이제 과거가 되어야합니다.</p>
+                                <p>- 정치 공학에 신물이난 국민의 지지로 일부지역을 제외하고는 평탄한 지지세로 시작할 수 있습니다.</p>
+                            </div>
+
+                            <!-- Secret Items for Role 3 -->
+                            <div class="space-y-2 pt-1">
+                                <div data-secret-target="ANY" class="secret-item hidden bg-green-950/70 border border-green-500/60 p-3 rounded-xl text-xs text-green-200 leading-relaxed shadow-inner">
+                                    [플레이어가 누구든 '언론 검증'결과 리스크 1등이 아니라면 서울-경기 선거구의 지지도가 올라갑니다.]
+                                </div>
+                                <div data-secret-target="김승주" class="secret-item hidden bg-green-950/70 border border-green-500/60 p-3 rounded-xl text-xs text-green-200 leading-relaxed shadow-inner">
+                                    [플레이어가 '김승주'라면 다른 플레이어의 역할 효과를 모두 제거합니다.]
+                                </div>
+                                <div data-secret-target="박현아" class="secret-item hidden bg-green-950/70 border border-green-500/60 p-3 rounded-xl text-xs text-green-200 leading-relaxed shadow-inner">
+                                    [플레이어가 박현아라면 '강박대전' 효과가 적용된 채 플레이합니다.]
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="pt-2 border-t border-slate-800 text-[11px] text-slate-400 flex justify-between items-center">
+                            <span>진영 표기: <strong class="text-green-400">초록 🟩 계파색 옅음</strong></span>
+                            <span class="role-status-footer text-xs text-green-400 font-bold">터치하여 선택</span>
+                        </div>
+                    </div>
+
+                    <!-- 4. 무소속 후보자 -->
+                    <div id="card-role-4" onclick="selectRoleCard(4)" class="cursor-pointer bg-slate-900 border-2 border-slate-400/40 hover:border-slate-300 rounded-2xl sm:rounded-3xl p-4 sm:p-6 shadow-xl relative overflow-hidden flex flex-col justify-between space-y-3 transition">
+                        
+                        <div id="completed-badge-4" class="hidden absolute top-3 right-3 z-10 bg-slate-800 border border-slate-600 text-slate-300 px-3 py-1 rounded-full text-xs font-extrabold shadow-lg flex items-center space-x-1.5">
+                            <i class="fa-solid fa-lock text-amber-400 text-xs"></i>
+                            <span>선택 완료</span>
+                        </div>
+
+                        <div class="flex items-center justify-between">
+                            <span class="bg-slate-200 text-slate-900 text-[11px] font-black px-3 py-1 rounded-full flex items-center space-x-1">
+                                <span>⬜ 제3지대 (무소속)</span>
+                            </span>
+                            <span class="role-selected-badge hidden text-slate-200 font-bold text-xs"><i class="fa-solid fa-circle-check"></i> 선택됨</span>
+                        </div>
+
+                        <div class="space-y-3">
+                            <h4 class="text-lg sm:text-xl font-black text-slate-100">4. 무소속 후보자</h4>
+
+                            <div class="text-xs sm:text-sm text-slate-200 space-y-2 leading-relaxed bg-slate-950/80 p-3.5 sm:p-4 rounded-xl border border-slate-800">
+                                <p>- 당신은 새로운미래당과 그 연합 정당들에서 완전히 상관 없는 정치적 이적을 선택했습니다. 지역도 지지세도 없이 새로 시작하여 청와대로 갈 것입니다.</p>
+                            </div>
+
+                            <!-- Secret Items for Role 4 -->
+                            <div class="space-y-2 pt-1">
+                                <div data-secret-target="ANY" class="secret-item hidden bg-slate-800/90 border border-slate-600 p-3 rounded-xl text-xs text-slate-200 leading-relaxed shadow-inner">
+                                    [플레이어가 누구든 자신의 전문정책분야 플레이시 관심지역과 서울-경기 모두에서 지지도가 올라갑니다.]
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="pt-2 border-t border-slate-800 text-[11px] text-slate-400 flex justify-between items-center">
+                            <span>진영 표기: <strong class="text-slate-200">흰색 ⬜ 제3지대</strong></span>
+                            <span class="role-status-footer text-xs text-slate-300 font-bold">터치하여 선택</span>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </section>
+
+        <section id="content-districts" class="hidden space-y-4 sm:space-y-6">
+            <div class="bg-slate-900/90 border border-slate-800 rounded-2xl sm:rounded-3xl p-4 sm:p-8 shadow-xl space-y-5 sm:space-y-6">
+                
+                <div class="flex items-center space-x-3 border-b border-slate-800 pb-3.5">
+                    <div class="w-9 h-9 sm:w-10 sm:h-10 rounded-xl sm:rounded-2xl bg-amber-500/20 text-amber-400 flex items-center justify-center text-lg sm:text-xl font-bold border border-amber-500/30 shrink-0">
+                        🗺️
+                    </div>
+                    <div>
+                        <h3 class="text-xl sm:text-2xl font-black text-white">&lt;5개 선거구 안내&gt;</h3>
+                        <p class="text-[11px] sm:text-xs text-slate-400">대한민국 대선 핵심 지역별 세부 특성</p>
+                    </div>
+                </div>
+
+                <!-- District Cards -->
+                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3.5">
+                    
+                    <!-- 서울-경기 -->
+                    <div class="bg-slate-950 border border-slate-800 p-4 rounded-2xl space-y-1.5 hover:border-amber-500/40 transition">
+                        <div class="text-[10px] font-bold text-amber-400">선거구 1</div>
+                        <h4 class="text-base sm:text-lg font-black text-white">서울 - 경기</h4>
+                        <p class="text-xs text-slate-300 leading-relaxed">
+                            수도권 핵심 선거구. 유권자 수가 가장 많아 이번 대선의 승패를 결정하는 가장 주요한 캐스팅보트 핵심 거점입니다.
+                        </p>
+                    </div>
+
+                    <!-- 충청 -->
+                    <div class="bg-slate-950 border border-slate-800 p-4 rounded-2xl space-y-1.5 hover:border-green-500/40 transition">
+                        <div class="text-[10px] font-bold text-green-400">선거구 2</div>
+                        <h4 class="text-base sm:text-lg font-black text-white">충청</h4>
+                        <p class="text-xs text-green-300 font-semibold leading-relaxed">
+                            진보와 중도 표심이 강세를 보이는 캐스팅보트 지역.
+                        </p>
+                    </div>
+
+                    <!-- 강원 -->
+                    <div class="bg-slate-950 border border-slate-800 p-4 rounded-2xl space-y-1.5 hover:border-purple-500/40 transition">
+                        <div class="text-[10px] font-bold text-purple-400">선거구 3</div>
+                        <h4 class="text-base sm:text-lg font-black text-white">강원</h4>
+                        <p class="text-xs text-purple-300 font-semibold leading-relaxed">
+                            보수와 중도 표심이 강세를 보이는 캐스팅 보트 지역.
+                        </p>
+                    </div>
+
+                    <!-- 전라 -->
+                    <div class="bg-slate-950 border border-slate-800 p-4 rounded-2xl space-y-1.5 hover:border-orange-500/40 transition">
+                        <div class="text-[10px] font-bold text-orange-400">선거구 4</div>
+                        <h4 class="text-base sm:text-lg font-black text-white">전라</h4>
+                        <p class="text-xs text-slate-300 leading-relaxed">
+                            호남권 전통 선거구. 진보 성향의 전통적 강세 지역이자 높은 결집력을 지닌 선거구입니다.
+                        </p>
+                    </div>
+
+                    <!-- 경상 -->
+                    <div class="bg-slate-950 border border-slate-800 p-4 rounded-2xl space-y-1.5 hover:border-purple-500/40 transition sm:col-span-2 lg:col-span-1">
+                        <div class="text-[10px] font-bold text-purple-400">선거구 5</div>
+                        <h4 class="text-base sm:text-lg font-black text-white">경상</h4>
+                        <p class="text-xs text-slate-300 leading-relaxed">
+                            영남권 전통 선거구. 보수 성향의 전통적 강세 지역이자 두터운 표밭을 보유한 요충지입니다.
+                        </p>
+                    </div>
+
+                </div>
+
+            </div>
+        </section>
+
+    </main>
+
+    <div id="nameModal" class="fixed inset-0 z-50 bg-slate-950/85 backdrop-blur-md flex items-center justify-center p-4">
+        <div class="bg-slate-900 border border-slate-700/80 rounded-2xl sm:rounded-3xl p-5 sm:p-7 max-w-sm w-full shadow-2xl space-y-4">
+            
+            <div class="text-center space-y-2">
+                <div class="w-12 h-12 rounded-2xl bg-amber-500/20 border border-amber-500/30 text-amber-400 flex items-center justify-center mx-auto text-xl shadow-md">
+                    👤
+                </div>
+                <h3 class="text-lg sm:text-xl font-black text-white">플레이어의 이름을 입력하세요</h3>
+            </div>
+
+            <form onsubmit="handleNameSubmit(event)" class="space-y-3.5">
+                <!-- Name Input -->
+                <div>
+                    <label class="block text-[11px] font-semibold text-slate-400 mb-1 text-center">이름</label>
+                    <input type="text" id="playerNameInput" placeholder="이름 입력 (예: 홍길동)" required autocomplete="off" oninput="handleNameInputChange()"
+                        class="w-full px-4 py-3 bg-slate-950 border border-slate-700 rounded-xl text-white font-bold placeholder-slate-600 focus:outline-none focus:border-amber-400 transition text-center text-base min-h-[48px]">
+                </div>
+
+                <!-- Dynamic Password Input Container -->
+                <div id="passwordContainer" class="hidden space-y-1 transition-all">
+                    <label class="block text-[11px] font-semibold text-amber-400 text-center">비밀번호 확인</label>
+                    <input type="password" id="playerPasswordInput" placeholder="비밀번호 입력" autocomplete="off"
+                        class="w-full px-4 py-3 bg-slate-950 border border-amber-500/60 rounded-xl text-white font-bold placeholder-slate-600 focus:outline-none focus:border-amber-400 transition text-center text-base min-h-[48px]">
+                </div>
+
+                <!-- Error Message Alert -->
+                <div id="passwordError" class="hidden text-xs text-red-400 font-bold text-center bg-red-950/60 border border-red-500/40 py-2 rounded-lg">
+                    비밀번호가 올바르지 않습니다.
+                </div>
+
+                <div class="flex space-x-2 pt-1">
+                    <button type="button" onclick="closeNameModal()" class="w-1/3 py-3 bg-slate-800 hover:bg-slate-700 active:scale-95 text-slate-300 font-bold text-xs rounded-xl transition min-h-[44px]">
+                        닫기
+                    </button>
+                    <button type="submit" class="w-2/3 py-3 bg-gradient-to-r from-orange-500 to-purple-600 active:scale-95 text-white font-black text-xs rounded-xl shadow-lg hover:opacity-95 transition min-h-[44px]">
+                        입력 완료
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        let currentPlayerName = '';
+        let selectedRoleId = null;
+        let disabledRoleIds = [];
+
+        window.onload = function() {
+            const savedName = localStorage.getItem('oraktruck_player_name');
+            if (savedName) {
+                applyPlayerName(savedName);
+            } else {
+                openNameModal();
+            }
+        };
+
+        function openNameModal() {
+            document.getElementById('nameModal').classList.remove('hidden');
+            const nameInput = document.getElementById('playerNameInput');
+            const pwInput = document.getElementById('playerPasswordInput');
+            const pwError = document.getElementById('passwordError');
+            
+            nameInput.value = currentPlayerName || '';
+            pwInput.value = '';
+            pwError.classList.add('hidden');
+            
+            handleNameInputChange();
+            setTimeout(() => nameInput.focus(), 100);
+        }
+
+        function closeNameModal() {
+            if (!currentPlayerName) {
+                applyPlayerName('플레이어');
+            }
+            document.getElementById('nameModal').classList.add('hidden');
+        }
+
+        function handleNameInputChange() {
+            const val = document.getElementById('playerNameInput').value.trim();
+            const pwContainer = document.getElementById('passwordContainer');
+            const pwError = document.getElementById('passwordError');
+            pwError.classList.add('hidden');
+
+            if (val === '김승주' || val === '유은비' || val === '박현아') {
+                pwContainer.classList.remove('hidden');
+            } else {
+                pwContainer.classList.add('hidden');
+            }
+        }
+
+        function handleNameSubmit(e) {
+            e.preventDefault();
+            const nameVal = document.getElementById('playerNameInput').value.trim();
+            const pwVal = document.getElementById('playerPasswordInput').value.trim();
+            const pwError = document.getElementById('passwordError');
+
+            if (!nameVal) return;
+
+            // Password Verification Checks
+            if (nameVal === '김승주') {
+                if (pwVal !== '1104') {
+                    pwError.textContent = '비밀번호가 올바르지 않습니다.';
+                    pwError.classList.remove('hidden');
+                    return;
+                }
+            } else if (nameVal === '유은비') {
+                if (pwVal !== '0410') {
+                    pwError.textContent = '비밀번호가 올바르지 않습니다.';
+                    pwError.classList.remove('hidden');
+                    return;
+                }
+            } else if (nameVal === '박현아') {
+                if (pwVal !== '0207') {
+                    pwError.textContent = '비밀번호가 올바르지 않습니다.';
+                    pwError.classList.remove('hidden');
+                    return;
+                }
+            }
+
+            pwError.classList.add('hidden');
+            applyPlayerName(nameVal);
+            document.getElementById('nameModal').classList.add('hidden');
+        }
+
+        function applyPlayerName(name) {
+            const cleanName = name.trim();
+            currentPlayerName = cleanName;
+            localStorage.setItem('oraktruck_player_name', cleanName);
+
+            // Header Display Update
+            const headerDesktop = document.getElementById('headerPlayerName');
+            const headerMobile = document.getElementById('headerPlayerNameMobile');
+            if (headerDesktop) headerDesktop.textContent = cleanName;
+            if (headerMobile) headerMobile.textContent = cleanName;
+
+            // SECRET UNLOCKING LOGIC
+            const allSecrets = document.querySelectorAll('.secret-item');
+            allSecrets.forEach(el => {
+                const target = el.getAttribute('data-secret-target');
+                if (cleanName === '김승주') {
+                    // 김승주 unlocks ALL secret traits!
+                    el.classList.remove('hidden');
+                } else if (target === 'ANY') {
+                    // Common secrets for everyone
+                    el.classList.remove('hidden');
+                } else if (target === cleanName) {
+                    // Match specific name (유은비 or 박현아)
+                    el.classList.remove('hidden');
+                } else {
+                    el.classList.add('hidden');
+                }
+            });
+
+            // ROLE DISABLING LOGIC (회색 처리 & 선택 완료)
+            if (cleanName === '김승주') {
+                // 김승주: ONLY 진보(#2) selectable. Disable 보수(#1), 중도(#3), 무소속(#4)
+                disabledRoleIds = [1, 3, 4];
+            } else if (cleanName === '유은비') {
+                // 유은비: ONLY 보수(#1) selectable. Disable 진보(#2), 중도(#3), 무소속(#4)
+                disabledRoleIds = [2, 3, 4];
+            } else if (cleanName === '박현아') {
+                // 박현아: Disable 보수(#1) and 진보(#2). Enable 중도(#3), 무소속(#4)
+                disabledRoleIds = [1, 2];
+            } else {
+                // All other players: ALL roles enabled
+                disabledRoleIds = [];
+            }
+
+            // Update card UI state for all 4 roles
+            [1, 2, 3, 4].forEach(id => {
+                setRoleCardDisabled(id, disabledRoleIds.includes(id));
+            });
+
+            // Reset selected role if currently disabled
+            if (disabledRoleIds.includes(selectedRoleId)) {
+                selectedRoleId = null;
+            }
+
+            refreshRoleSelections();
+        }
+
+        function setRoleCardDisabled(roleId, isDisabled) {
+            const card = document.getElementById(`card-role-${roleId}`);
+            const badge = document.getElementById(`completed-badge-${roleId}`);
+            if (!card) return;
+
+            const footerText = card.querySelector('.role-status-footer');
+
+            if (isDisabled) {
+                card.classList.add('role-card-disabled');
+                if (badge) badge.classList.remove('hidden');
+                if (footerText) {
+                    footerText.textContent = '선택 불가 (선택 완료)';
+                    footerText.className = 'role-status-footer text-xs font-bold text-slate-500';
+                }
+            } else {
+                card.classList.remove('role-card-disabled');
+                if (badge) badge.classList.add('hidden');
+                if (footerText) {
+                    let colorClass = 'text-amber-400';
+                    if (roleId === 1) colorClass = 'text-purple-400';
+                    if (roleId === 2) colorClass = 'text-orange-400';
+                    if (roleId === 3) colorClass = 'text-green-400';
+                    if (roleId === 4) colorClass = 'text-slate-200';
+
+                    footerText.textContent = '터치하여 선택';
+                    footerText.className = `role-status-footer text-xs font-bold ${colorClass}`;
+                }
+            }
+        }
+
+        function selectRoleCard(roleId) {
+            if (disabledRoleIds.includes(roleId)) return;
+            selectedRoleId = roleId;
+            refreshRoleSelections();
+        }
+
+        function refreshRoleSelections() {
+            [1, 2, 3, 4].forEach(id => {
+                const card = document.getElementById(`card-role-${id}`);
+                if (!card) return;
+                const badge = card.querySelector('.role-selected-badge');
+                
+                if (id === selectedRoleId && !disabledRoleIds.includes(id)) {
+                    card.classList.add('ring-2', 'ring-amber-400', 'bg-slate-800/95');
+                    if (badge) badge.classList.remove('hidden');
+                } else {
+                    card.classList.remove('ring-2', 'ring-amber-400', 'bg-slate-800/95');
+                    if (badge) badge.classList.add('hidden');
+                }
+            });
+        }
+
+        function handleRoleTabAccess() {
+            if (!currentPlayerName) {
+                openNameModal();
+            } else {
+                switchTab('roles');
+            }
+        }
+
+        function switchTab(tabKey) {
+            if (!currentPlayerName && tabKey === 'roles') {
+                openNameModal();
+                return;
+            }
+
+            const tabs = ['rules', 'roles', 'districts'];
+            tabs.forEach(t => {
+                const contentEl = document.getElementById(`content-${t}`);
+                const btnEl = document.getElementById(`tabBtn-${t}`);
+                if (t === tabKey) {
+                    contentEl.classList.remove('hidden');
+                    btnEl.classList.add('border-orange-500', 'text-orange-400');
+                    btnEl.classList.remove('border-transparent', 'text-slate-400');
+                } else {
+                    contentEl.classList.add('hidden');
+                    btnEl.classList.remove('border-orange-500', 'text-orange-400');
+                    btnEl.classList.add('border-transparent', 'text-slate-400');
+                }
+            });
+
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+    </script>
+</body>
+</html>
