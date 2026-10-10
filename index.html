@@ -87,6 +87,7 @@
                 </div>
             </div>
 
+            <!-- Player Profile Modal Trigger Button -->
             <button onclick="openNameModal()" class="shrink-0 flex items-center space-x-2 bg-slate-800/90 hover:bg-slate-700/90 active:scale-95 border border-slate-700 rounded-xl sm:rounded-2xl px-2.5 sm:px-3.5 py-2 min-h-[44px] transition shadow-md">
                 <div class="w-6 h-6 rounded-full bg-slate-700 flex items-center justify-center text-amber-400 text-xs shrink-0">
                     <i class="fa-solid fa-user"></i>
@@ -104,6 +105,7 @@
             </button>
         </div>
 
+        <!-- Navigation Tabs -->
         <nav class="max-w-5xl mx-auto px-2 sm:px-6 flex border-t border-slate-800 overflow-x-auto no-scrollbar scroll-smooth">
             <button id="tabBtn-rules" onclick="switchTab('rules')" class="tab-btn min-h-[48px] px-4 sm:px-6 py-3 text-xs sm:text-sm font-black border-b-2 border-orange-500 text-orange-400 flex items-center space-x-1.5 whitespace-nowrap transition active:bg-slate-800/50">
                 <i class="fa-solid fa-scroll text-xs"></i>
@@ -122,6 +124,7 @@
 
     <main class="flex-1 max-w-5xl w-full mx-auto px-3.5 sm:px-6 lg:px-8 py-4 sm:py-6 space-y-4 sm:space-y-6">
 
+        <!-- Banner Card -->
         <section class="bg-gradient-to-r from-purple-950/80 via-slate-900 to-orange-950/80 border border-slate-800 rounded-2xl sm:rounded-3xl p-4 sm:p-6 shadow-xl relative overflow-hidden">
             <div class="flex flex-col xs:flex-row items-center justify-between gap-3 text-center xs:text-left">
                 <div class="space-y-1">
@@ -223,7 +226,7 @@
                     </div>
                 </div>
 
-                <!-- Political Faction Color Badges with updated shape mappings -->
+                <!-- Political Faction Color Badges -->
                 <div class="grid grid-cols-2 sm:grid-cols-4 gap-2">
                     <div class="bg-purple-950/30 border border-purple-500/30 p-2.5 rounded-xl flex items-center space-x-2">
                         <span class="text-xl">🟪</span>
@@ -260,6 +263,11 @@
                     <!-- 1. 보수 성향 후보자 (반강) -->
                     <div id="card-role-1" onclick="selectRoleCard(1)" class="cursor-pointer bg-slate-900 border-2 border-purple-500/40 hover:border-purple-400 rounded-2xl sm:rounded-3xl p-4 sm:p-6 shadow-xl relative overflow-hidden flex flex-col justify-between space-y-3 transition">
                         
+                        <!-- Fixed Player Badge (Shown for '선거 유세') -->
+                        <div id="fixed-player-badge-1" class="fixed-player-badge hidden bg-gradient-to-r from-amber-500 to-amber-600 text-slate-950 font-black px-3 py-1 rounded-lg text-xs shadow-md flex items-center space-x-1 mb-1">
+                            <span>✨ 확정 플레이어: 유은비</span>
+                        </div>
+
                         <div id="completed-badge-1" class="hidden absolute top-3 right-3 z-10 bg-slate-800 border border-slate-600 text-slate-300 px-3 py-1 rounded-full text-xs font-extrabold shadow-lg flex items-center space-x-1.5">
                             <i class="fa-solid fa-lock text-amber-400 text-xs"></i>
                             <span>선택 완료</span>
@@ -282,10 +290,10 @@
 
                             <!-- Secret Items for Role 1 -->
                             <div class="space-y-2 pt-1">
-                                <div data-secret-target="유은비" class="secret-item hidden bg-purple-950/70 border border-purple-500/60 p-3 rounded-xl text-xs text-purple-200 leading-relaxed shadow-inner">
+                                <div data-secret-role="1" data-secret-target="유은비" class="secret-item hidden bg-purple-950/70 border border-purple-500/60 p-3 rounded-xl text-xs text-purple-200 leading-relaxed shadow-inner">
                                     [플레이어가 '유은비'라면 오락트럭 '잠룡' 우승 베네핏으로 '여당' 효과를 받으며 시작할 수 있습니다.]
                                 </div>
-                                <div data-secret-target="김승주" class="secret-item hidden bg-purple-950/70 border border-purple-500/60 p-3 rounded-xl text-xs text-purple-200 leading-relaxed shadow-inner">
+                                <div data-secret-role="1" data-secret-target="김승주" class="secret-item hidden bg-purple-950/70 border border-purple-500/60 p-3 rounded-xl text-xs text-purple-200 leading-relaxed shadow-inner">
                                     [플레이어가 '김승주'라면 '단일화' 효과를 사용할 수 있습니다.]
                                 </div>
                             </div>
@@ -300,6 +308,11 @@
                     <!-- 2. 진보 성향 후보자 (친강) -->
                     <div id="card-role-2" onclick="selectRoleCard(2)" class="cursor-pointer bg-slate-900 border-2 border-orange-500/40 hover:border-orange-400 rounded-2xl sm:rounded-3xl p-4 sm:p-6 shadow-xl relative overflow-hidden flex flex-col justify-between space-y-3 transition">
                         
+                        <!-- Fixed Player Badge (Shown for '선거 유세') -->
+                        <div id="fixed-player-badge-2" class="fixed-player-badge hidden bg-gradient-to-r from-amber-500 to-amber-600 text-slate-950 font-black px-3 py-1 rounded-lg text-xs shadow-md flex items-center space-x-1 mb-1">
+                            <span>✨ 확정 플레이어: 김승주</span>
+                        </div>
+
                         <div id="completed-badge-2" class="hidden absolute top-3 right-3 z-10 bg-slate-800 border border-slate-600 text-slate-300 px-3 py-1 rounded-full text-xs font-extrabold shadow-lg flex items-center space-x-1.5">
                             <i class="fa-solid fa-lock text-amber-400 text-xs"></i>
                             <span>선택 완료</span>
@@ -322,13 +335,13 @@
 
                             <!-- Secret Items for Role 2 -->
                             <div class="space-y-2 pt-1">
-                                <div data-secret-target="박현아" class="secret-item hidden bg-orange-950/70 border border-orange-500/60 p-3 rounded-xl text-xs text-orange-200 leading-relaxed shadow-inner">
+                                <div data-secret-role="2" data-secret-target="박현아" class="secret-item hidden bg-orange-950/70 border border-orange-500/60 p-3 rounded-xl text-xs text-orange-200 leading-relaxed shadow-inner">
                                     [플레이어가 '박현아'라면 '대통령의 선거 개입' 효과를 받으며 플레이할 수 있습니다.]
                                 </div>
-                                <div data-secret-target="김승주" class="secret-item hidden bg-orange-950/70 border border-orange-500/60 p-3 rounded-xl text-xs text-orange-200 leading-relaxed shadow-inner">
+                                <div data-secret-role="2" data-secret-target="김승주" class="secret-item hidden bg-orange-950/70 border border-orange-500/60 p-3 rounded-xl text-xs text-orange-200 leading-relaxed shadow-inner">
                                     [플레이어가 '김승주'라면 '제 2의 전두환-노태우' 효과를 받으며 플레이할 수 있습니다.]
                                 </div>
-                                <div data-secret-target="유은비" class="secret-item hidden bg-orange-950/70 border border-orange-500/60 p-3 rounded-xl text-xs text-orange-200 leading-relaxed shadow-inner">
+                                <div data-secret-role="2" data-secret-target="유은비" class="secret-item hidden bg-orange-950/70 border border-orange-500/60 p-3 rounded-xl text-xs text-orange-200 leading-relaxed shadow-inner">
                                     [플레이어가 '유은비'라면 오락트럭 잠룡 우승 베네핏으로 '여당' 효과를 받으며 시작할 수 있습니다.]
                                 </div>
                             </div>
@@ -343,6 +356,11 @@
                     <!-- 3. 중도 성향 후보자 (無계파) -->
                     <div id="card-role-3" onclick="selectRoleCard(3)" class="cursor-pointer bg-slate-900 border-2 border-green-500/40 hover:border-green-400 rounded-2xl sm:rounded-3xl p-4 sm:p-6 shadow-xl relative overflow-hidden flex flex-col justify-between space-y-3 transition">
                         
+                        <!-- Fixed Player Badge (Shown for '선거 유세') -->
+                        <div id="fixed-player-badge-3" class="fixed-player-badge hidden bg-gradient-to-r from-amber-500 to-amber-600 text-slate-950 font-black px-3 py-1 rounded-lg text-xs shadow-md flex items-center space-x-1 mb-1">
+                            <span>✨ 확정 플레이어: 박현아</span>
+                        </div>
+
                         <div id="completed-badge-3" class="hidden absolute top-3 right-3 z-10 bg-slate-800 border border-slate-600 text-slate-300 px-3 py-1 rounded-full text-xs font-extrabold shadow-lg flex items-center space-x-1.5">
                             <i class="fa-solid fa-lock text-amber-400 text-xs"></i>
                             <span>선택 완료</span>
@@ -365,13 +383,13 @@
 
                             <!-- Secret Items for Role 3 -->
                             <div class="space-y-2 pt-1">
-                                <div data-secret-target="ANY" class="secret-item hidden bg-green-950/70 border border-green-500/60 p-3 rounded-xl text-xs text-green-200 leading-relaxed shadow-inner">
+                                <div data-secret-role="3" data-secret-target="ANY" class="secret-item hidden bg-green-950/70 border border-green-500/60 p-3 rounded-xl text-xs text-green-200 leading-relaxed shadow-inner">
                                     [플레이어가 누구든 '언론 검증'결과 리스크 1등이 아니라면 서울-경기 선거구의 지지도가 올라갑니다.]
                                 </div>
-                                <div data-secret-target="김승주" class="secret-item hidden bg-green-950/70 border border-green-500/60 p-3 rounded-xl text-xs text-green-200 leading-relaxed shadow-inner">
+                                <div data-secret-role="3" data-secret-target="김승주" class="secret-item hidden bg-green-950/70 border border-green-500/60 p-3 rounded-xl text-xs text-green-200 leading-relaxed shadow-inner">
                                     [플레이어가 '김승주'라면 다른 플레이어의 역할 효과를 모두 제거합니다.]
                                 </div>
-                                <div data-secret-target="박현아" class="secret-item hidden bg-green-950/70 border border-green-500/60 p-3 rounded-xl text-xs text-green-200 leading-relaxed shadow-inner">
+                                <div data-secret-role="3" data-secret-target="박현아" class="secret-item hidden bg-green-950/70 border border-green-500/60 p-3 rounded-xl text-xs text-green-200 leading-relaxed shadow-inner">
                                     [플레이어가 박현아라면 '강박대전' 효과가 적용된 채 플레이합니다.]
                                 </div>
                             </div>
@@ -386,6 +404,11 @@
                     <!-- 4. 무소속 후보자 -->
                     <div id="card-role-4" onclick="selectRoleCard(4)" class="cursor-pointer bg-slate-900 border-2 border-slate-400/40 hover:border-slate-300 rounded-2xl sm:rounded-3xl p-4 sm:p-6 shadow-xl relative overflow-hidden flex flex-col justify-between space-y-3 transition">
                         
+                        <!-- Fixed Player Badge (Shown for '선거 유세') -->
+                        <div id="fixed-player-badge-4" class="fixed-player-badge hidden bg-gradient-to-r from-amber-500 to-amber-600 text-slate-950 font-black px-3 py-1 rounded-lg text-xs shadow-md flex items-center space-x-1 mb-1">
+                            <span>✨ 확정 플레이어: 국민의힘</span>
+                        </div>
+
                         <div id="completed-badge-4" class="hidden absolute top-3 right-3 z-10 bg-slate-800 border border-slate-600 text-slate-300 px-3 py-1 rounded-full text-xs font-extrabold shadow-lg flex items-center space-x-1.5">
                             <i class="fa-solid fa-lock text-amber-400 text-xs"></i>
                             <span>선택 완료</span>
@@ -407,7 +430,7 @@
 
                             <!-- Secret Items for Role 4 -->
                             <div class="space-y-2 pt-1">
-                                <div data-secret-target="ANY" class="secret-item hidden bg-slate-800/90 border border-slate-600 p-3 rounded-xl text-xs text-slate-200 leading-relaxed shadow-inner">
+                                <div data-secret-role="4" data-secret-target="ANY" class="secret-item hidden bg-slate-800/90 border border-slate-600 p-3 rounded-xl text-xs text-slate-200 leading-relaxed shadow-inner">
                                     [플레이어가 누구든 자신의 전문정책분야 플레이시 관심지역과 서울-경기 모두에서 지지도가 올라갑니다.]
                                 </div>
                             </div>
@@ -505,7 +528,7 @@
                 <!-- Name Input -->
                 <div>
                     <label class="block text-[11px] font-semibold text-slate-400 mb-1 text-center">이름</label>
-                    <input type="text" id="playerNameInput" placeholder="이름 입력 (예: 홍길동)" required autocomplete="off" oninput="handleNameInputChange()"
+                    <input type="text" id="playerNameInput" placeholder="이름 입력 (예: 선거 유세, 홍길동)" required autocomplete="off" oninput="handleNameInputChange()"
                         class="w-full px-4 py-3 bg-slate-950 border border-slate-700 rounded-xl text-white font-bold placeholder-slate-600 focus:outline-none focus:border-amber-400 transition text-center text-base min-h-[48px]">
                 </div>
 
@@ -626,36 +649,66 @@
             if (headerDesktop) headerDesktop.textContent = cleanName;
             if (headerMobile) headerMobile.textContent = cleanName;
 
-            // SECRET UNLOCKING LOGIC
             const allSecrets = document.querySelectorAll('.secret-item');
-            allSecrets.forEach(el => {
-                const target = el.getAttribute('data-secret-target');
-                if (cleanName === '김승주') {
-                    // 김승주 unlocks ALL secret traits!
-                    el.classList.remove('hidden');
-                } else if (target === 'ANY') {
-                    // Common secrets for everyone
-                    el.classList.remove('hidden');
-                } else if (target === cleanName) {
-                    // Match specific name (유은비 or 박현아)
-                    el.classList.remove('hidden');
-                } else {
-                    el.classList.add('hidden');
-                }
-            });
+            const fixedBadges = document.querySelectorAll('.fixed-player-badge');
 
-            // ROLE DISABLING LOGIC (회색 처리 & 선택 완료)
+            // SECRET UNLOCKING & FIXED PLAYER BADGES LOGIC
+            if (cleanName === '선거 유세') {
+                // Show fixed player badges
+                fixedBadges.forEach(b => b.classList.remove('hidden'));
+
+                // Role-matched secrets for '선거 유세'
+                allSecrets.forEach(el => {
+                    const target = el.getAttribute('data-secret-target');
+                    const role = el.getAttribute('data-secret-role');
+
+                    if (role === '1') {
+                        if (target === '유은비') el.classList.remove('hidden');
+                        else el.classList.add('hidden');
+                    } else if (role === '2') {
+                        if (target === '김승주') el.classList.remove('hidden');
+                        else el.classList.add('hidden');
+                    } else if (role === '3') {
+                        if (target === '박현아' || target === 'ANY') el.classList.remove('hidden');
+                        else el.classList.add('hidden');
+                    } else if (role === '4') {
+                        if (target === 'ANY') el.classList.remove('hidden');
+                        else el.classList.add('hidden');
+                    }
+                });
+            } else {
+                // Hide fixed player badges for other names
+                fixedBadges.forEach(b => b.classList.add('hidden'));
+
+                allSecrets.forEach(el => {
+                    const target = el.getAttribute('data-secret-target');
+                    if (cleanName === '김승주') {
+                        // 김승주 unlocks ALL secrets
+                        el.classList.remove('hidden');
+                    } else if (target === 'ANY') {
+                        // Common secrets
+                        el.classList.remove('hidden');
+                    } else if (target === cleanName) {
+                        // Match specific name (유은비 or 박현아)
+                        el.classList.remove('hidden');
+                    } else {
+                        el.classList.add('hidden');
+                    }
+                });
+            }
+
+            // ROLE DISABLING LOGIC
             if (cleanName === '김승주') {
-                // 김승주: ONLY 진보(#2) selectable. Disable 보수(#1), 중도(#3), 무소속(#4)
+                // 김승주: ONLY 진보(#2) selectable
                 disabledRoleIds = [1, 3, 4];
             } else if (cleanName === '유은비') {
-                // 유은비: ONLY 보수(#1) selectable. Disable 진보(#2), 중도(#3), 무소속(#4)
+                // 유은비: ONLY 보수(#1) selectable
                 disabledRoleIds = [2, 3, 4];
             } else if (cleanName === '박현아') {
-                // 박현아: Disable 보수(#1) and 진보(#2). Enable 중도(#3), 무소속(#4)
+                // 박현아: Disable 보수(#1) and 진보(#2)
                 disabledRoleIds = [1, 2];
             } else {
-                // All other players: ALL roles enabled
+                // All other players (including '선거 유세'): ALL roles enabled
                 disabledRoleIds = [];
             }
 
